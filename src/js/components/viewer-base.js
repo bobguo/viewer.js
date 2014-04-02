@@ -15,7 +15,6 @@ Crocodoc.addComponent('viewer-base', function (scope) {
         ATTR_SVG_VERSION         = 'data-svg-version',
         CSS_CLASS_VIEWER         = CSS_CLASS_PREFIX + 'viewer',
         CSS_CLASS_DOC            = CSS_CLASS_PREFIX + 'doc',
-        CSS_CLASS_PAGES          = CSS_CLASS_PREFIX + 'pages',
         CSS_CLASS_VIEWPORT       = CSS_CLASS_PREFIX + 'viewport',
         CSS_CLASS_LOGO           = CSS_CLASS_PREFIX + 'viewer-logo',
         CSS_CLASS_DRAGGABLE      = CSS_CLASS_PREFIX + 'draggable',
@@ -36,8 +35,6 @@ Crocodoc.addComponent('viewer-base', function (scope) {
     var VIEWER_HTML_TEMPLATE =
         '<div tabindex="-1" class="' + CSS_CLASS_VIEWPORT + '">' +
             '<div class="' + CSS_CLASS_DOC + '">' +
-                '<div class="' + CSS_CLASS_PAGES + '">' +
-                '</div>' +
             '</div>' +
         '</div>' +
         '<div class="' + CSS_CLASS_LOGO + '"></div>';
@@ -130,7 +127,6 @@ Crocodoc.addComponent('viewer-base', function (scope) {
         $el.html(VIEWER_HTML_TEMPLATE);
         config.$viewport = $el.find('.'+CSS_CLASS_VIEWPORT);
         config.$doc = $el.find('.'+CSS_CLASS_DOC);
-        config.$pagesWrapper = $el.find('.'+CSS_CLASS_PAGES);
     }
 
     /**
@@ -182,7 +178,7 @@ Crocodoc.addComponent('viewer-base', function (scope) {
         }
 
         // insert skeleton and keep a reference to the jq object
-        config.$pages = $(skeleton).appendTo(config.$pagesWrapper);
+        config.$pages = $(skeleton).appendTo(config.$doc);
     }
 
     /**
@@ -599,6 +595,7 @@ Crocodoc.addComponent('viewer-base', function (scope) {
                 scope.destroyComponent(layout);
             }
 
+            var previousLayout = config.layout;
             config.layout = mode;
 
             layout = newLayout;
@@ -608,6 +605,10 @@ Crocodoc.addComponent('viewer-base', function (scope) {
 
             config.currentLayout = layout;
 
+            scope.broadcast('layoutchange', {
+                previousLayout: previousLayout,
+                layout: mode
+            });
             return layout;
         },
 
